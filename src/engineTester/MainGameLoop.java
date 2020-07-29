@@ -3,14 +3,8 @@ package engineTester;
 import org.lwjgl.opengl.Display;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
-import renderEngine.MasterRenderer;
-import renderEngine.OBJLoader;
-import terrains.Terrain;
-import textures.ModelTexture;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import renderEngine.RawModel;
+import renderEngine.Renderer;
 
 public class MainGameLoop {
 
@@ -19,14 +13,33 @@ public class MainGameLoop {
 		//Open up the display
 		DisplayManager.createDisplay();
 
-		while (!Display.isCloseRequested()) {
+		Loader loader = new Loader();
+		Renderer renderer = new Renderer();
 
+		//Counter clockwise order
+		float[] vertices = {
+				//Left bottom triangle
+				-0.5f, 0.5f, 0f,
+				-0.5f, -0.5f, 0f,
+				0.5f, -0.5f, 0f,
+				//Right top triangle
+				0.5f, -0.5f, 0f,
+				0.5f, 0.5f, 0f,
+				-0.5f, 0.5f, 0f
+		};
+
+		RawModel rawModel = loader.loadToVAO(vertices);
+
+		while (!Display.isCloseRequested()) {
+			renderer.prepare();
 			//game logic
 			//rendering
+			renderer.render(rawModel);
 			DisplayManager.updateDisplay();
 		}
 		//Close display
 		DisplayManager.closeDisplay();
+		loader.cleanUp();
 
 	}
 }
