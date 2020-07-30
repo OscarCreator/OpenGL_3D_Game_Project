@@ -22,13 +22,16 @@ public class MainGameLoop {
 				-0.5f, 0.5f, 0f,
 				-0.5f, -0.5f, 0f,
 				0.5f, -0.5f, 0f,
-				//Right top triangle
-				0.5f, -0.5f, 0f,
 				0.5f, 0.5f, 0f,
-				-0.5f, 0.5f, 0f
 		};
 
-		RawModel rawModel = loader.loadToVAO(vertices);
+		int[] indices = {
+				0,1,3, //Top left triangle
+				3,1,2 //Bottom right triangle
+		};
+
+
+		RawModel rawModel = loader.loadToVAO(vertices, indices);
 
 		while (!Display.isCloseRequested()) {
 			renderer.prepare();
@@ -37,9 +40,9 @@ public class MainGameLoop {
 			renderer.render(rawModel);
 			DisplayManager.updateDisplay();
 		}
+		loader.cleanUp();
 		//Close display
 		DisplayManager.closeDisplay();
-		loader.cleanUp();
 
 	}
 }

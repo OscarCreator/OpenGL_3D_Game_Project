@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,16 +22,16 @@ public class Loader {
 	 * Loads all the data into each wanted position in location, store the id's and
 	 * return the needed information to access all the data when needed.
 	 * */
-	public RawModel loadToVAO(float[] positions){
+	public RawModel loadToVAO(float[] positions, int[] indices){
 		//Binds the vao
 		int vaoID = createVAO();
-
+		bindIndicesBuffer(indices);
 		//Store the position, color (from obj), normals into each separate vbo location
 		storeDataInAttributeList(POSITION_VBO_LOCATION, 3, positions);
 
 		//unbind the vao. This makes sure that we don't accidentally render using the wrong vao.
 		unbindVAO();
-		return new RawModel(vaoID, positions.length / 3);
+		return new RawModel(vaoID, indices.length);
 	}
 
 	/**
@@ -81,6 +82,27 @@ public class Loader {
 		GL30.glBindVertexArray(0);
 	}
 
+	private void bindIndicesBuffer(int[] indices){
+		//Create vbo.
+		int vboID = GL15.glGenBuffers();
+		//Add vbo to list.
+		vbos.add(vboID);
+		//Bind the vbo.
+		//GL_ELEMENT_ARRAY_BUFFER tells OpenGL that it is the indices buffer.
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboID);
+		//Convert the data to an intbuffer.
+		IntBuffer buffer = storeDataInIntBuffer(indices);
+		//store data in vbo.
+		//GL_STATIC_DRAW tells OpenGL that we do not want to edit this data.
+		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+	}
+
+	private IntBuffer storeDataInIntBuffer(int[] data){
+		IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
+		buffer.put(data);
+		buffer.flip();
+		return buffer;
+	}
 
 	private FloatBuffer storeDataInFloatBuffer(float[] data){
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
