@@ -5,6 +5,7 @@ import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.RawModel;
 import renderEngine.Renderer;
+import shaders.StaticShader;
 
 public class MainGameLoop {
 
@@ -15,6 +16,7 @@ public class MainGameLoop {
 
 		Loader loader = new Loader();
 		Renderer renderer = new Renderer();
+		StaticShader shader = new StaticShader();
 
 		//Counter clockwise order
 		float[] vertices = {
@@ -34,12 +36,17 @@ public class MainGameLoop {
 		RawModel rawModel = loader.loadToVAO(vertices, indices);
 
 		while (!Display.isCloseRequested()) {
+			//Prepare for rendering
 			renderer.prepare();
-			//game logic
-			//rendering
+			//"start"/use this program
+			shader.start();
+			//render model
 			renderer.render(rawModel);
+			//stop using this program
+			shader.stop();
 			DisplayManager.updateDisplay();
 		}
+		shader.cleanUp();
 		loader.cleanUp();
 		//Close display
 		DisplayManager.closeDisplay();
