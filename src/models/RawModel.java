@@ -1,4 +1,4 @@
-package renderEngine;
+package models;
 
 import org.lwjgl.opengl.*;
 

@@ -1,11 +1,16 @@
 package renderEngine;
 
+import models.RawModel;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -17,21 +22,39 @@ public class Loader {
 
 	private List<Integer> vaos = new ArrayList<>();
 	private List<Integer> vbos = new ArrayList<>();
+	private List<Integer> textures = new ArrayList<>();
 
 	/**
 	 * Loads all the data into each wanted position in location, store the id's and
 	 * return the needed information to access all the data when needed.
 	 * */
-	public RawModel loadToVAO(float[] positions, int[] indices){
+	public RawModel loadToVAO(float[] positions, float[] textureCoords, int[] indices){
 		//Binds the vao
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
 		//Store the position, color (from obj), normals into each separate vbo location
 		storeDataInAttributeList(POSITION_VBO_LOCATION, 3, positions);
+		//Store the texturecoordinates for the model
+		storeDataInAttributeList(TEXTURE_VBO_LOCATION, 2, textureCoords);
 
 		//unbind the vao. This makes sure that we don't accidentally render using the wrong vao.
 		unbindVAO();
 		return new RawModel(vaoID, indices.length);
+	}
+
+	/**
+	 * Load up texture into memory and return the id for reference.
+	 * */
+	public int loadTexture(String fileName){
+		Texture texture = null;
+		try {
+			texture = TextureLoader.getTexture("PNG", new FileInputStream("res/" + fileName + ".png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		int textureID = texture.getTextureID();
+		textures.add(textureID);
+		return textureID;
 	}
 
 	/**
@@ -43,6 +66,9 @@ public class Loader {
 		}
 		for (int vbo : vbos){
 			GL15.glDeleteBuffers(vbo);
+		}
+		for (int texture : textures){
+			GL11.glDeleteTextures(texture);
 		}
 	}
 
@@ -62,10 +88,10 @@ public class Loader {
 		//Create a empty vbo
 		int vboID = GL15.glGenBuffers();
 		vbos.add(vboID);
-		//Bind the vbo
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
 		//Convert data into a floatbuffer
 		FloatBuffer buffer = storeDataInFloatBuffer(data);
+		//Bind the vbo
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
 		//Store floatbuffer in the vbo
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
 		//Store vbo in the vao
