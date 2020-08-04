@@ -24,7 +24,7 @@ public class Camera {
 	public void move(){
 
 		//yaw is around z axis
-		System.out.println("yaw:" + yaw);
+		//System.out.println("yaw:" + yaw);
 
 		float xzLen1 = (float) Math.cos(Math.toRadians(pitch));
 		direction.z = -xzLen1 * (float) Math.cos(Math.toRadians(yaw));
