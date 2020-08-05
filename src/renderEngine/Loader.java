@@ -28,7 +28,7 @@ public class Loader {
 	 * Loads all the data into each wanted position in location, store the id's and
 	 * return the needed information to access all the data when needed.
 	 * */
-	public RawModel loadToVAO(float[] positions, float[] textureCoords, int[] indices){
+	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices){
 		//Binds the vao
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
@@ -36,7 +36,8 @@ public class Loader {
 		storeDataInAttributeList(POSITION_VBO_LOCATION, 3, positions);
 		//Store the texturecoordinates for the model
 		storeDataInAttributeList(TEXTURE_VBO_LOCATION, 2, textureCoords);
-
+		//Store the normals for the model
+		storeDataInAttributeList(NORMAL_VBO_LOCATION, 3, normals);
 		//unbind the vao. This makes sure that we don't accidentally render using the wrong vao.
 		unbindVAO();
 		return new RawModel(vaoID, indices.length);

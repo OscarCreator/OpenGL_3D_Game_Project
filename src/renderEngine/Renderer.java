@@ -8,8 +8,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import shaders.StaticShader;
 import toolbox.Maths;
 
-import static util.Constants.POSITION_VBO_LOCATION;
-import static util.Constants.TEXTURE_VBO_LOCATION;
+import static util.Constants.*;
 
 /**
  * Created by Oscar on 2020-07-29.
@@ -46,6 +45,7 @@ public class Renderer {
 		//enables the vbo for both position and texture
 		GL20.glEnableVertexAttribArray(POSITION_VBO_LOCATION);
 		GL20.glEnableVertexAttribArray(TEXTURE_VBO_LOCATION);
+		GL20.glEnableVertexAttribArray(NORMAL_VBO_LOCATION);
 
 		//Create and load up the matrix for the specific entity.
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(
@@ -67,6 +67,8 @@ public class Renderer {
 		GL11.glDrawElements(GL11.GL_TRIANGLES, rawModel.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 		GL20.glDisableVertexAttribArray(POSITION_VBO_LOCATION);
 		GL20.glDisableVertexAttribArray(TEXTURE_VBO_LOCATION);
+		GL20.glDisableVertexAttribArray(NORMAL_VBO_LOCATION);
+
 		GL30.glBindVertexArray(0);
 	}
 

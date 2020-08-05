@@ -2,6 +2,7 @@ package engineTester;
 
 import entities.Camera;
 import entities.Entity;
+import entities.Light;
 import models.TexturedModel;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
@@ -26,8 +27,8 @@ public class MainGameLoop {
 
 
 
-		RawModel rawModel = OBJLoader.loadObjModel("lowPolyTree", loader);
-		ModelTexture texture = new ModelTexture(loader.loadTexture("lowPolyTree"));
+		RawModel rawModel = OBJLoader.loadObjModel("dragon", loader);
+		ModelTexture texture = new ModelTexture(loader.loadTexture("white"));
 		TexturedModel texturedModel = new TexturedModel(rawModel, texture);
 
 		Entity entity = new Entity(
@@ -35,11 +36,13 @@ public class MainGameLoop {
 				new Vector3f(0, -10,-15),
 				0,0,0,1);
 
+		Light light = new Light(new Vector3f(20,0, 10), new Vector3f(1,1,1));
+
 		Camera camera = new Camera();
 
 
 		while (!Display.isCloseRequested()) {
-			entity.increaseRotation(0,0,-0.1f);
+			//entity.increaseRotation(0,0,-0.1f);
 			camera.move();
 
 			//Prepare for rendering
@@ -48,7 +51,7 @@ public class MainGameLoop {
 			shader.start();
 
 			shader.loadViewMatrix(camera);
-
+			shader.loadLight(light);
 			//render model
 			renderer.render(entity, shader);
 			//stop using this program
