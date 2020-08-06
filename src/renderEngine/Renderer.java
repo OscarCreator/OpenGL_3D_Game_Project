@@ -6,6 +6,7 @@ import models.TexturedModel;
 import org.lwjgl.opengl.*;
 import org.lwjgl.util.vector.Matrix4f;
 import shaders.StaticShader;
+import textures.ModelTexture;
 import toolbox.Maths;
 
 import static util.Constants.*;
@@ -54,7 +55,11 @@ public class Renderer {
 				entity.getRotY(),
 				entity.getRotZ(),
 				entity.getScale());
+
 		shader.loadTransformationMatrix(transformationMatrix);
+		ModelTexture texture = model.getTexture();
+		shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
+
 
 		//activate texturebank 0 which sampler2D in the fragmentshader
 		// uses by default

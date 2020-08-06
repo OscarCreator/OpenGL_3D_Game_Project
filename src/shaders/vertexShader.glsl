@@ -7,6 +7,8 @@ in vec3 normal;
 out vec2 pass_textureCoords;
 out vec3 surfaceNormal;
 out vec3 toLightVector;
+//vector from vertex to camera
+out vec3 toCameraVector;
 
 // uniform variables - can be set at any time from java code
 uniform mat4 transformationMatrix;
@@ -25,4 +27,8 @@ void main(void){
     surfaceNormal = (transformationMatrix * vec4(normal, 0.0)).xyz;
     //vector from vertex to light
     toLightVector = lightPosition - worldPosition.xyz;
+
+    //multiply by 0,0,0 to make the inverse matrix to camera position
+    // then subtract the vertex worldposition to get the vector to the camera
+    toCameraVector = (inverse(viewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - worldPosition.xyz;
 }
