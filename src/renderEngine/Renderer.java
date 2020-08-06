@@ -9,6 +9,9 @@ import shaders.StaticShader;
 import textures.ModelTexture;
 import toolbox.Maths;
 
+import java.util.List;
+import java.util.Map;
+
 import static util.Constants.*;
 
 /**
@@ -21,8 +24,14 @@ public class Renderer {
 	private static final float FAR_PLANE = 1000;
 
 	private Matrix4f projectionMatrix;
+	private StaticShader shader;
 
 	public Renderer(StaticShader shader) {
+		this.shader = shader;
+		//Stop rendering back side of triangles.
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glCullFace(GL11.GL_BACK);
+
 		//Load up the projection matrix once to the shader.
 		createProjectionMatrix();
 		shader.start();
@@ -38,17 +47,53 @@ public class Renderer {
 
 	}
 
-	public void render(Entity entity, StaticShader shader){
-		TexturedModel model = entity.getModel();
+	public void render(Map<TexturedModel, List<Entity>> entities){
+		for (TexturedModel model : entities.keySet()){
+			prepareTexturedModel(model);
+			List<Entity> batch = entities.get(model);
+			for (Entity e : batch){
+				prepareInstances(e);
+				GL11.glDrawElements(GL11.GL_TRIANGLES,
+						model.getRawModel().getVertexCount(),
+						GL11.GL_UNSIGNED_INT, 0
+				);
+			}
+			unbindTexturedModel();
+		}
+	}
+
+	public void prepareTexturedModel(TexturedModel model){
+		// VBO enabling
+
 		RawModel rawModel = model.getRawModel();
 		GL30.glBindVertexArray(rawModel.getVaoID());
-
 		//enables the vbo for both position and texture
 		GL20.glEnableVertexAttribArray(POSITION_VBO_LOCATION);
 		GL20.glEnableVertexAttribArray(TEXTURE_VBO_LOCATION);
 		GL20.glEnableVertexAttribArray(NORMAL_VBO_LOCATION);
 
-		//Create and load up the matrix for the specific entity.
+
+		// Texture
+
+		ModelTexture texture = model.getTexture();
+		shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
+		//activate texturebank 0 which sampler2D in the fragmentshader
+		// uses by default
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		//bind the texture
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getID());
+
+	}
+
+	private void unbindTexturedModel(){
+		GL20.glDisableVertexAttribArray(POSITION_VBO_LOCATION);
+		GL20.glDisableVertexAttribArray(TEXTURE_VBO_LOCATION);
+		GL20.glDisableVertexAttribArray(NORMAL_VBO_LOCATION);
+
+		GL30.glBindVertexArray(0);
+	}
+
+	private void prepareInstances(Entity entity){
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(
 				entity.getPosition(),
 				entity.getRotX(),
@@ -57,25 +102,8 @@ public class Renderer {
 				entity.getScale());
 
 		shader.loadTransformationMatrix(transformationMatrix);
-		ModelTexture texture = model.getTexture();
-		shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
-
-
-		//activate texturebank 0 which sampler2D in the fragmentshader
-		// uses by default
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-
-		//bind the texture
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getID());
-
-		//render triangles with indices buffer
-		GL11.glDrawElements(GL11.GL_TRIANGLES, rawModel.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
-		GL20.glDisableVertexAttribArray(POSITION_VBO_LOCATION);
-		GL20.glDisableVertexAttribArray(TEXTURE_VBO_LOCATION);
-		GL20.glDisableVertexAttribArray(NORMAL_VBO_LOCATION);
-
-		GL30.glBindVertexArray(0);
 	}
+
 
 	private void createProjectionMatrix(){
 		float aspectRatio = (float) Display.getWidth() / (float) Display.getHeight();
