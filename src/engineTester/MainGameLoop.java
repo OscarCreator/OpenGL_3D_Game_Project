@@ -3,12 +3,15 @@ package engineTester;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
+import models.RawModel;
 import models.TexturedModel;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
-import renderEngine.*;
-import models.RawModel;
-import shaders.StaticShader;
+import renderEngine.DisplayManager;
+import renderEngine.Loader;
+import renderEngine.MasterRenderer;
+import renderEngine.OBJLoader;
+import terrains.Terrain;
 import textures.ModelTexture;
 
 public class MainGameLoop {
@@ -33,7 +36,12 @@ public class MainGameLoop {
 				new Vector3f(0, -4,-15),
 				0,0,0,0.6f);
 
-		Light light = new Light(new Vector3f(20,0, 10), new Vector3f(1,1,1));
+		Light light = new Light(new Vector3f(0,5, 0), new Vector3f(1,1,1));
+
+		Terrain terrain1 = new Terrain(0,0, loader,
+				new ModelTexture(loader.loadTexture("grass")));
+		Terrain terrain2 = new Terrain(0,1, loader,
+				new ModelTexture(loader.loadTexture("image")));
 
 		Camera camera = new Camera();
 
@@ -44,6 +52,7 @@ public class MainGameLoop {
 			entity.increaseRotation(0,0.5f,0);
 			camera.move();
 
+			renderer.processTerrain(terrain1, terrain2);
 			renderer.processEntity(entity);
 
 			renderer.render(light, camera);
