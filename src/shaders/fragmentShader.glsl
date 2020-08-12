@@ -34,9 +34,15 @@ void main(void){
     float dampedFactor = pow(specularFactor, shineDamper);
     vec3 finalSpecular = dampedFactor * reflectivity * lightColour;
 
+
+    vec4 textureColour = texture(textureSampler, pass_textureCoords);
+    if (textureColour.a < 0.5){
+        discard;
+    }
+
     //Output color on the screen
     //finds the color of the texture at the passed texturecoordinate
     //adds specular lighting to the final colour
-    out_Color = vec4(diffuse, 1) * texture(textureSampler, pass_textureCoords) + vec4(finalSpecular, 1.0);
+    out_Color = vec4(diffuse, 1) * textureColour + vec4(finalSpecular, 1.0);
 
 }

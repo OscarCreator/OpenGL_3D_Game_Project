@@ -16,6 +16,8 @@ uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform vec3 lightPosition;
 
+uniform float useFakeLightning;
+
 void main(void){
 
     vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
@@ -23,8 +25,14 @@ void main(void){
     gl_Position = projectionMatrix * viewMatrix * worldPosition;
     pass_textureCoords = textureCoords;
 
+    vec3 actualNormal = normal;
+    //replace with normal facing straight up
+    if (useFakeLightning > 0.5){
+        actualNormal = vec3(0, 1, 0);
+    }
+
     //Normal vector of the vertex
-    surfaceNormal = (transformationMatrix * vec4(normal, 0.0)).xyz;
+    surfaceNormal = (transformationMatrix * vec4(actualNormal, 0.0)).xyz;
     //vector from vertex to light
     toLightVector = lightPosition - worldPosition.xyz;
 

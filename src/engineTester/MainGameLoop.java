@@ -14,6 +14,10 @@ import renderEngine.OBJLoader;
 import terrains.Terrain;
 import textures.ModelTexture;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class MainGameLoop {
 
 	public static void main(String[] args) {
@@ -24,23 +28,41 @@ public class MainGameLoop {
 		Loader loader = new Loader();
 
 
-		RawModel rawModel = OBJLoader.loadObjModel("dragon", loader);
-		ModelTexture texture = new ModelTexture(loader.loadTexture("blue"));
-		TexturedModel texturedModel = new TexturedModel(rawModel, texture);
-		texturedModel.getTexture().setShineDamper(10);
-		texturedModel.getTexture().setReflectivity(0);
+		TexturedModel treeModel = new TexturedModel(
+				OBJLoader.loadObjModel("lowPolyTree", loader),
+				new ModelTexture(loader.loadTexture("lowPolyTree")));
+		TexturedModel fermModel = new TexturedModel(
+				OBJLoader.loadObjModel("fern", loader),
+				new ModelTexture(loader.loadTexture("fern")));
+		fermModel.getTexture().setHasTransparency(true);
+		fermModel.getTexture().setUseFakeLighting(true);
+		TexturedModel grassModel = new TexturedModel(
+				OBJLoader.loadObjModel("grassModel", loader),
+				new ModelTexture(loader.loadTexture("grassTexture")));
+		grassModel.getTexture().setHasTransparency(true);
+		grassModel.getTexture().setUseFakeLighting(true);
+
+		List<Entity> entityList = new ArrayList<>();
+
+		Random rand = new Random();
+
+		for (int i = 0; i < 25; i++){
+			int randomNum = rand.nextInt(3);
+			float randX = rand.nextFloat() * 100f;
+			float randZ = rand.nextFloat() * 100f - 100;
+			switch (randomNum){
+				case 0: entityList.add(new Entity(fermModel, new Vector3f(randX, 0, randZ), 0,0,0,1));
+				case 1: entityList.add(new Entity(grassModel, new Vector3f(randX, 0, randZ), 0,0,0,1));
+				case 2: entityList.add(new Entity(treeModel, new Vector3f(randX, 0, randZ), 0,0,0,1));
+			}
+		}
 
 
-		Entity entity = new Entity(
-				texturedModel,
-				new Vector3f(0, -4,-15),
-				0,0,0,0.6f);
+		Light light = new Light(new Vector3f(10,15, -20), new Vector3f(1,1,1));
 
-		Light light = new Light(new Vector3f(0,5, 0), new Vector3f(1,1,1));
-
-		Terrain terrain1 = new Terrain(0,0, loader,
+		Terrain terrain1 = new Terrain(0,-1, loader,
 				new ModelTexture(loader.loadTexture("grass")));
-		Terrain terrain2 = new Terrain(0,1, loader,
+		Terrain terrain2 = new Terrain(0,0, loader,
 				new ModelTexture(loader.loadTexture("image")));
 
 		Camera camera = new Camera();
@@ -49,11 +71,12 @@ public class MainGameLoop {
 
 
 		while (!Display.isCloseRequested()) {
-			entity.increaseRotation(0,0.5f,0);
 			camera.move();
 
 			renderer.processTerrain(terrain1, terrain2);
-			renderer.processEntity(entity);
+			for (Entity e : entityList){
+				renderer.processEntity(e);
+			}
 
 			renderer.render(light, camera);
 

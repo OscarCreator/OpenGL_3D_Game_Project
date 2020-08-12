@@ -52,6 +52,10 @@ public class MasterRenderer {
 		GL11.glCullFace(GL11.GL_BACK);
 	}
 
+	public static void disableCulling(){
+		GL11.glDisable(GL11.GL_CULL_FACE);
+	}
+
 	/**
 	 * Renders the entities and light from the perspective of the camera
 	 * */

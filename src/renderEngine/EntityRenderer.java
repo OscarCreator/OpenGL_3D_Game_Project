@@ -68,6 +68,10 @@ public class EntityRenderer {
 		// Texture
 
 		ModelTexture texture = model.getTexture();
+		if (texture.isHasTransparency()){
+			MasterRenderer.disableCulling();
+		}
+		shader.loadFakeLightning(texture.isUseFakeLighting());
 		shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
 		//activate texturebank 0 which sampler2D in the fragmentshader
 		// uses by default
@@ -78,6 +82,7 @@ public class EntityRenderer {
 	}
 
 	private void unbindTexturedModel(){
+		MasterRenderer.enableCulling();
 		GL20.glDisableVertexAttribArray(POSITION_VBO_LOCATION);
 		GL20.glDisableVertexAttribArray(TEXTURE_VBO_LOCATION);
 		GL20.glDisableVertexAttribArray(NORMAL_VBO_LOCATION);
