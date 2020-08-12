@@ -12,6 +12,7 @@ import java.util.List;
  * Created by Oscar on 2019-08-21.
  */
 
+@Deprecated
 public class OBJLoader {
 
 	public static RawModel loadObjModel(String fileName, Loader loader){

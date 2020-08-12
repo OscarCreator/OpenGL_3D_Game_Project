@@ -9,6 +9,7 @@ out vec3 surfaceNormal;
 out vec3 toLightVector;
 //vector from vertex to camera
 out vec3 toCameraVector;
+out float visibility;
 
 // uniform variables - can be set at any time from java code
 uniform mat4 transformationMatrix;
@@ -18,11 +19,16 @@ uniform vec3 lightPosition;
 
 uniform float useFakeLightning;
 
+const float density = 0.0035;
+const float gradient = 5.0;
+
 void main(void){
 
     vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
+    //vertex position relative to camer
+    vec4 positionRelativeToCam = viewMatrix * worldPosition;
 
-    gl_Position = projectionMatrix * viewMatrix * worldPosition;
+    gl_Position = projectionMatrix * positionRelativeToCam;
     pass_textureCoords = textureCoords;
 
     vec3 actualNormal = normal;
@@ -39,4 +45,10 @@ void main(void){
     //multiply by 0,0,0 to make the inverse matrix to camera position
     // then subtract the vertex worldposition to get the vector to the camera
     toCameraVector = (inverse(viewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - worldPosition.xyz;
+
+    //distance to the vertex to the camera
+    float distance = length(positionRelativeToCam.xyz);
+    //calculating visibility using exponential gradient
+    visibility = exp(-pow((distance * density), gradient));
+    visibility = clamp(visibility, 0.0, 1.0);
 }
