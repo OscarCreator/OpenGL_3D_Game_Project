@@ -107,6 +107,13 @@ public abstract class ShaderProgram {
 		GL20.glUniformMatrix4(location, false, matrixBuffer);
 	}
 
+	/**
+	 * Load int to shader at any time.
+	 * */
+	protected void loadInt(int location, int value){
+		GL20.glUniform1i(location, value);
+	}
+
 
 	/**
 	 * Loads the text file and compiles it as a shader program

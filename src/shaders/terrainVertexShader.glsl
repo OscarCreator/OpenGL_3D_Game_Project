@@ -27,8 +27,8 @@ void main(void){
 	vec4 positionRelativeToCam = viewMatrix * worldPosition;
 
 	gl_Position = projectionMatrix * positionRelativeToCam;
-	//the multiplier makes texturing one terrain with the same texture 10 time
-	pass_textureCoords = textureCoords * 10;
+
+	pass_textureCoords = textureCoords;
 
 	//Normal vector of the vertex
 	surfaceNormal = (transformationMatrix * vec4(normal, 0.0)).xyz;

@@ -3,23 +3,27 @@ package terrains;
 import models.RawModel;
 import renderEngine.Loader;
 import textures.ModelTexture;
+import textures.TerrainTexture;
+import textures.TerrainTexturePack;
 
 /**
  * Created by Oscar on 2019-12-17.
  */
 public class Terrain {
 
-	private static final float SIZE = 100;
+	private static final float SIZE = 200;
 
 	//vertices along one size
 	private static final int VERTEX_COUNT = 128;
 
 	private float x, z;
 	private RawModel model;
-	private ModelTexture texture;
+	private TerrainTexturePack texturePack;
+	private TerrainTexture blendMap;
 
-	public Terrain(int gridX, int gridZ, Loader loader, ModelTexture texture) {
-		this.texture = texture;
+	public Terrain(int gridX, int gridZ, Loader loader, TerrainTexturePack texturePack, TerrainTexture blendMap) {
+		this.texturePack = texturePack;
+		this.blendMap = blendMap;
 		this.x = gridX * SIZE;
 		this.z = gridZ * SIZE;
 		this.model = generateTerrain(loader);
@@ -86,8 +90,11 @@ public class Terrain {
 		return model;
 	}
 
-	public ModelTexture getTexture() {
-		return texture;
+	public TerrainTexturePack getTexturePack() {
+		return texturePack;
 	}
 
+	public TerrainTexture getBlendMap() {
+		return blendMap;
+	}
 }

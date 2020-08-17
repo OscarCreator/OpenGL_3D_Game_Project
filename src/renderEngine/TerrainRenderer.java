@@ -10,6 +10,7 @@ import org.lwjgl.util.vector.Vector3f;
 import shaders.TerrainShader;
 import terrains.Terrain;
 import textures.ModelTexture;
+import textures.TerrainTexturePack;
 import toolbox.Maths;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class TerrainRenderer {
 		shader.start();
 		//load up the projection matrix at first creation
 		shader.loadProjectionMatrix(projectionMatrix);
+		shader.connectTextureUnits();
 		shader.stop();
 	}
 
@@ -64,17 +66,34 @@ public class TerrainRenderer {
 		GL20.glEnableVertexAttribArray(TEXTURE_VBO_LOCATION);
 		GL20.glEnableVertexAttribArray(NORMAL_VBO_LOCATION);
 
-		ModelTexture texture = terrain.getTexture();
+		bindTextures(terrain);
 		//Loads the values shinedamper, reflectivity into the shader with
 		// ex. glUniform1f() (Which takes a float)
-		shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
+		//TODO replace 1, 0 with real values
+		shader.loadShineVariables(1, 0);
 
+
+	}
+
+	private void bindTextures(Terrain terrain){
+		TerrainTexturePack texturePack = terrain.getTexturePack();
 		//sampler2d uses GL13.GL_TEXTURE0 texturebank as the default
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		//bind the textureId to the "texturebank variable" in the shader
 		// this will give the color of each fragment on the model
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getID());
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texturePack.getBackgroundTexture().getTextureID());
 
+		GL13.glActiveTexture(GL13.GL_TEXTURE1);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texturePack.getrTexture().getTextureID());
+
+		GL13.glActiveTexture(GL13.GL_TEXTURE2);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texturePack.getgTexture().getTextureID());
+
+		GL13.glActiveTexture(GL13.GL_TEXTURE3);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texturePack.getbTexture().getTextureID());
+
+		GL13.glActiveTexture(GL13.GL_TEXTURE4);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, terrain.getBlendMap().getTextureID());
 	}
 
 	/**
