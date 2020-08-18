@@ -3,6 +3,8 @@ package engineTester;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
+import entities.Player;
+import models.RawModel;
 import models.TexturedModel;
 import objconverter.ModelData;
 import objconverter.OBJFileLoader;
@@ -29,6 +31,15 @@ public class MainGameLoop {
 
 		Loader loader = new Loader();
 
+		ModelData personData = OBJFileLoader.loadOBJ("person");
+
+		RawModel playerRaw = loader.loadToVAO(personData.getVertices(),
+				personData.getTextureCoords(),
+				personData.getNormals(),
+				personData.getIndices());
+		ModelTexture playerTexture = new ModelTexture(loader.loadTexture("playerTexture"));
+		TexturedModel playerTexturedModel = new TexturedModel(playerRaw, playerTexture);
+		Player player = new Player(playerTexturedModel, new Vector3f(30,0,-50),0,180,0,0.7f);
 
 		ModelData treeData = OBJFileLoader.loadOBJ("lowPolyTree");
 		TexturedModel treeModel = new TexturedModel(
@@ -56,7 +67,7 @@ public class MainGameLoop {
 
 		Random rand = new Random();
 
-		for (int i = 0; i < 100; i++){
+		for (int i = 0; i < 20; i++){
 			int randomNum = rand.nextInt(3);
 			float randX = rand.nextFloat() * 200f;
 			float randZ = rand.nextFloat() * 400f - 200;
@@ -93,8 +104,9 @@ public class MainGameLoop {
 
 
 		while (!Display.isCloseRequested()) {
-			camera.move();
+			player.move();
 
+			renderer.processEntity(player);
 			renderer.processTerrain(terrain1, terrain2);
 			for (Entity e : entityList){
 				renderer.processEntity(e);
