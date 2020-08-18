@@ -79,7 +79,7 @@ public class MainGameLoop {
 		}
 
 
-		Light light = new Light(new Vector3f(10,30, -20), new Vector3f(1,1,1));
+		Light light = new Light(new Vector3f(10,50, -20), new Vector3f(1,1,1));
 
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy2"));
 		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("mud"));
@@ -98,12 +98,13 @@ public class MainGameLoop {
 		Terrain terrain1 = new Terrain(0,-1, loader, texturePack, blendMap);
 		Terrain terrain2 = new Terrain(0,0, loader, texturePack, blendMap);
 
-		Camera camera = new Camera();
+		Camera camera = new Camera(player);
 
 		MasterRenderer renderer = new MasterRenderer();
 
 
 		while (!Display.isCloseRequested()) {
+			camera.move();
 			player.move();
 
 			renderer.processEntity(player);
