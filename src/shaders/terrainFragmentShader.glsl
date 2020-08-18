@@ -26,7 +26,7 @@ void main(void){
     //colour closer to black will render more backgroundtexture
     float backTextureAmount = 1 - (blendMapColour.r + blendMapColour.g + blendMapColour.b);
     //tiled coordinate (makes texture repeat on single terrain)
-    vec2 tiledCoords = pass_textureCoords * 10;
+    vec2 tiledCoords = pass_textureCoords * 40;
     vec4 backgroundTextureColour = texture(backgroundTexture, tiledCoords) * backTextureAmount;
     vec4 rTextureColour = texture(rTexture, tiledCoords) * blendMapColour.r;
     vec4 gTextureColour = texture(gTexture, tiledCoords) * blendMapColour.g;

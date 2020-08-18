@@ -65,22 +65,6 @@ public class MainGameLoop {
 
 		List<Entity> entityList = new ArrayList<>();
 
-		Random rand = new Random();
-
-		for (int i = 0; i < 20; i++){
-			int randomNum = rand.nextInt(3);
-			float randX = rand.nextFloat() * 200f;
-			float randZ = rand.nextFloat() * 400f - 200;
-			switch (randomNum){
-				case 0: entityList.add(new Entity(fernModel, new Vector3f(randX, 0, randZ), 0,0,0,1));
-				case 1: entityList.add(new Entity(grassModel, new Vector3f(randX, 0, randZ), 0,0,0,1));
-				case 2: entityList.add(new Entity(treeModel, new Vector3f(randX, 0, randZ), 0,0,0,1));
-			}
-		}
-
-
-		Light light = new Light(new Vector3f(10,50, -20), new Vector3f(1,1,1));
-
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy2"));
 		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("mud"));
 		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("grassFlowers"));
@@ -95,8 +79,25 @@ public class MainGameLoop {
 
 		TerrainTexture blendMap = new TerrainTexture((loader.loadTexture("blendMap")));
 
-		Terrain terrain1 = new Terrain(0,-1, loader, texturePack, blendMap);
-		Terrain terrain2 = new Terrain(0,0, loader, texturePack, blendMap);
+		Terrain terrain1 = new Terrain(0,-1, loader, texturePack, blendMap, "heightmap");
+
+
+		Random rand = new Random();
+
+		for (int i = 0; i < 100; i++){
+			int randomNum = rand.nextInt(3);
+			float randX = rand.nextFloat() * 800f;
+			float randZ = rand.nextFloat() * 800f - 800;
+			float y = terrain1.getHeightOfTerrain(randX, randZ);
+			switch (randomNum){
+				case 0: entityList.add(new Entity(fernModel, new Vector3f(randX, y, randZ), 0,0,0,1));
+				case 1: entityList.add(new Entity(grassModel, new Vector3f(randX, y, randZ), 0,0,0,1));
+				case 2: entityList.add(new Entity(treeModel, new Vector3f(randX, y, randZ), 0,0,0,1));
+			}
+		}
+
+
+		Light light = new Light(new Vector3f(10,50, -20), new Vector3f(1,1,1));
 
 		Camera camera = new Camera(player);
 
@@ -105,10 +106,10 @@ public class MainGameLoop {
 
 		while (!Display.isCloseRequested()) {
 			camera.move();
-			player.move();
+			player.move(terrain1);
 
 			renderer.processEntity(player);
-			renderer.processTerrain(terrain1, terrain2);
+			renderer.processTerrain(terrain1);
 			for (Entity e : entityList){
 				renderer.processEntity(e);
 			}
