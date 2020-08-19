@@ -19,6 +19,9 @@ uniform vec3 lightPosition;
 
 uniform float useFakeLightning;
 
+uniform float numberOfRows;
+uniform vec2 offset;
+
 const float density = 0.0035;
 const float gradient = 5.0;
 
@@ -29,7 +32,7 @@ void main(void){
     vec4 positionRelativeToCam = viewMatrix * worldPosition;
 
     gl_Position = projectionMatrix * positionRelativeToCam;
-    pass_textureCoords = textureCoords;
+    pass_textureCoords = (textureCoords / numberOfRows) + offset;
 
     vec3 actualNormal = normal;
     //replace with normal facing straight up

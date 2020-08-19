@@ -87,8 +87,8 @@ public class TerrainShader extends ShaderProgram {
 
 
 	public void loadLight(Light light){
-		super.loadVector(location_lightPosition, light.getPosition());
-		super.loadVector(location_lightColour, light.getColour());
+		super.loadVector3f(location_lightPosition, light.getPosition());
+		super.loadVector3f(location_lightColour, light.getColour());
 	}
 
 	public void loadProjectionMatrix(Matrix4f projection){
@@ -101,6 +101,6 @@ public class TerrainShader extends ShaderProgram {
 	}
 
 	public void loadSkyColour(float red, float green, float blue) {
-		super.loadVector(location_skyColour, new Vector3f(red, green, blue));
+		super.loadVector3f(location_skyColour, new Vector3f(red, green, blue));
 	}
 }

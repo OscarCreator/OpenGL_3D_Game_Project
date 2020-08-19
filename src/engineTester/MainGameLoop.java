@@ -48,10 +48,11 @@ public class MainGameLoop {
 				new ModelTexture(loader.loadTexture("lowPolyTree")));
 
 		ModelData fernData = OBJFileLoader.loadOBJ("fern");
+		ModelTexture fernTexture = new ModelTexture(loader.loadTexture("fern-textureatlas"));
+		fernTexture.setNumberOfRows(2);
 		TexturedModel fernModel = new TexturedModel(
 				loader.loadToVAO(fernData.getVertices(), fernData.getTextureCoords(),
-						fernData.getNormals(), fernData.getIndices()),
-				new ModelTexture(loader.loadTexture("fern")));
+						fernData.getNormals(), fernData.getIndices()), fernTexture);
 		fernModel.getTexture().setHasTransparency(true);
 		fernModel.getTexture().setUseFakeLighting(true);
 
@@ -84,15 +85,18 @@ public class MainGameLoop {
 
 		Random rand = new Random();
 
-		for (int i = 0; i < 100; i++){
+		for (int i = 0; i < 400; i++){
 			int randomNum = rand.nextInt(3);
 			float randX = rand.nextFloat() * 800f;
 			float randZ = rand.nextFloat() * 800f - 800;
 			float y = terrain1.getHeightOfTerrain(randX, randZ);
 			switch (randomNum){
-				case 0: entityList.add(new Entity(fernModel, new Vector3f(randX, y, randZ), 0,0,0,1));
+				case 0: entityList.add(new Entity(fernModel, rand.nextInt(4), new Vector3f(randX, y, randZ), 0,0,0,1));
+					break;
 				case 1: entityList.add(new Entity(grassModel, new Vector3f(randX, y, randZ), 0,0,0,1));
+					break;
 				case 2: entityList.add(new Entity(treeModel, new Vector3f(randX, y, randZ), 0,0,0,1));
+					break;
 			}
 		}
 

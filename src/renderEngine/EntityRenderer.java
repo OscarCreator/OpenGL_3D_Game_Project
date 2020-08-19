@@ -55,8 +55,6 @@ public class EntityRenderer {
 	}
 
 	public void prepareTexturedModel(TexturedModel model){
-		// VBO enabling
-
 		RawModel rawModel = model.getRawModel();
 		GL30.glBindVertexArray(rawModel.getVaoID());
 		//enables the vbo for both position and texture
@@ -73,6 +71,8 @@ public class EntityRenderer {
 		}
 		shader.loadFakeLightning(texture.isUseFakeLighting());
 		shader.loadShineVariables(texture.getShineDamper(), texture.getReflectivity());
+		//load rows of the texture atlas
+		shader.loadNumberOfRows(model.getTexture().getNumberOfRows());
 		//activate texturebank 0 which sampler2D in the fragmentshader
 		// uses by default
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -99,6 +99,8 @@ public class EntityRenderer {
 				entity.getScale());
 
 		shader.loadTransformationMatrix(transformationMatrix);
+		//load offset per entity because they can have different offsets (same obj but different textures)
+		shader.loadOffset(entity.getTextureXOffset(), entity.getTextureYOffset());
 	}
 
 
