@@ -4,6 +4,8 @@ import com.oscarcreator.lwjgllearning.entities.Camera;
 import com.oscarcreator.lwjgllearning.entities.Entity;
 import com.oscarcreator.lwjgllearning.entities.Light;
 import com.oscarcreator.lwjgllearning.entities.Player;
+import com.oscarcreator.lwjgllearning.guis.GuiRenderer;
+import com.oscarcreator.lwjgllearning.guis.GuiTexture;
 import com.oscarcreator.lwjgllearning.models.RawModel;
 import com.oscarcreator.lwjgllearning.models.TexturedModel;
 import com.oscarcreator.lwjgllearning.objconverter.ModelData;
@@ -16,6 +18,7 @@ import com.oscarcreator.lwjgllearning.textures.ModelTexture;
 import com.oscarcreator.lwjgllearning.textures.TerrainTexture;
 import com.oscarcreator.lwjgllearning.textures.TerrainTexturePack;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.util.ArrayList;
@@ -107,6 +110,21 @@ public class MainGameLoop {
 
 		MasterRenderer renderer = new MasterRenderer();
 
+		List<GuiTexture> guis = new ArrayList<>();
+		GuiTexture gui = new GuiTexture(
+				loader.loadTexture("white"),
+				new Vector2f(0.5f, 0.5f),
+				new Vector2f(0.25f,0.25f));
+		guis.add(gui);
+		GuiTexture gui2 = new GuiTexture(
+				loader.loadTexture("heightmap"),
+				new Vector2f(-0.75f, -0.75f),
+				new Vector2f(0.25f,0.25f));
+		guis.add(gui2);
+
+		GuiRenderer guiRenderer = new GuiRenderer(loader);
+
+
 
 		while (!Display.isCloseRequested()) {
 			camera.move();
@@ -120,8 +138,11 @@ public class MainGameLoop {
 
 			renderer.render(light, camera);
 
+			guiRenderer.render(guis);
+
 			DisplayManager.updateDisplay();
 		}
+		guiRenderer.cleanUp();
 		renderer.cleanUp();
 		loader.cleanUp();
 		//Close display

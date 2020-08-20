@@ -40,6 +40,13 @@ public class Loader {
 		return new RawModel(vaoID, indices.length);
 	}
 
+	public RawModel loadToVAO(float[] positions){
+		int vaoID = createVAO();
+		this.storeDataInAttributeList(POSITION_VBO_LOCATION, 2, positions);
+		unbindVAO();
+		return new RawModel(vaoID, positions.length / 2);
+	}
+
 	/**
 	 * Load up texture into memory and return the id for reference.
 	 * */
