@@ -6,6 +6,8 @@ import com.oscarcreator.lwjgllearning.toolbox.Maths;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
+import java.util.List;
+
 import static com.oscarcreator.lwjgllearning.util.Constants.*;
 
 /**
@@ -22,8 +24,8 @@ public class TerrainShader extends ShaderProgram {
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;
 	private int location_viewMatrix;
-	private int location_lightPosition;
-	private int location_lightColour;
+	private int location_lightPosition[];
+	private int location_lightColour[];
 	private int location_shineDamper;
 	private int location_reflectivity;
 	private int location_skyColour;
@@ -52,8 +54,7 @@ public class TerrainShader extends ShaderProgram {
 		location_transformationMatrix = super.getUniformLocation("transformationMatrix");
 		location_projectionMatrix = super.getUniformLocation("projectionMatrix");
 		location_viewMatrix = super.getUniformLocation("viewMatrix");
-		location_lightPosition = super.getUniformLocation("lightPosition");
-		location_lightColour = super.getUniformLocation("lightColour");
+
 		location_shineDamper = super.getUniformLocation("shineDamper");
 		location_reflectivity = super.getUniformLocation("reflectivity");
 		location_skyColour = super.getUniformLocation("skyColour");
@@ -62,6 +63,14 @@ public class TerrainShader extends ShaderProgram {
 		location_gTexture = super.getUniformLocation("gTexture");
 		location_bTexture = super.getUniformLocation("bTexture");
 		location_blendMap = super.getUniformLocation("blendMap");
+
+		location_lightPosition = new int[MAX_LIGHTS];
+		location_lightColour = new int[MAX_LIGHTS];
+		for (int i = 0; i < MAX_LIGHTS; i++){
+			location_lightPosition[i] = super.getUniformLocation(String.format("lightPosition[%d]", i));
+			location_lightColour[i] = super.getUniformLocation(String.format("lightColour[%d]", i));
+		}
+
 	}
 
 	/**
@@ -86,9 +95,19 @@ public class TerrainShader extends ShaderProgram {
 	}
 
 
-	public void loadLight(Light light){
-		super.loadVector3f(location_lightPosition, light.getPosition());
-		super.loadVector3f(location_lightColour, light.getColour());
+	public void loadLights(List<Light> lights){
+		for (int i = 0; i < ShaderProgram.MAX_LIGHTS; i++){
+			//as long as there is more lights in the array, load them up
+			if (i < lights.size()){
+				super.loadVector3f(location_lightPosition[i], lights.get(i).getPosition());
+				super.loadVector3f(location_lightColour[i], lights.get(i).getColour());
+				//if there is less than MAX_LIGHTS then load up empty
+			}else{
+				super.loadVector3f(location_lightPosition[i], new Vector3f(0,0,0));
+				super.loadVector3f(location_lightColour[i], new Vector3f(0,0,0));
+
+			}
+		}
 	}
 
 	public void loadProjectionMatrix(Matrix4f projection){

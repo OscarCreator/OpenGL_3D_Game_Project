@@ -104,7 +104,12 @@ public class MainGameLoop {
 		}
 
 
-		Light light = new Light(new Vector3f(10,50, -20), new Vector3f(1,1,1));
+		Light light1 = new Light(new Vector3f(-200,50, -200), new Vector3f(0,0,4));
+		Light light2 = new Light(new Vector3f(200,50, 200), new Vector3f(4,0,0));
+
+		List<Light> lights = new ArrayList<>();
+		lights.add(light1);
+		lights.add(light2);
 
 		Camera camera = new Camera(player);
 
@@ -113,13 +118,13 @@ public class MainGameLoop {
 		List<GuiTexture> guis = new ArrayList<>();
 		GuiTexture gui = new GuiTexture(
 				loader.loadTexture("white"),
-				new Vector2f(0.5f, 0.5f),
-				new Vector2f(0.25f,0.25f));
+				new Vector2f(-0.8f, 0.8f),
+				new Vector2f(0.05f,0.05f));
 		guis.add(gui);
 		GuiTexture gui2 = new GuiTexture(
 				loader.loadTexture("heightmap"),
-				new Vector2f(-0.75f, -0.75f),
-				new Vector2f(0.25f,0.25f));
+				new Vector2f(-0.6f, 0.8f),
+				new Vector2f(0.1f,0.1f));
 		guis.add(gui2);
 
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
@@ -136,7 +141,7 @@ public class MainGameLoop {
 				renderer.processEntity(e);
 			}
 
-			renderer.render(light, camera);
+			renderer.render(camera, lights);
 
 			guiRenderer.render(guis);
 

@@ -23,9 +23,9 @@ public class MasterRenderer {
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 1000;
 
-	private static final float RED = 0.5f;
-	private static final float GREEN = 0.5f;
-	private static final float BLUE = 0.5f;
+	private static final float RED = 0x99 / 256f;
+	private static final float GREEN = 0xc7 / 256f;
+	private static final float BLUE = 0xc3 / 256f;
 
 	private StaticShader shader = new StaticShader();
 	private EntityRenderer entityRenderer;
@@ -63,11 +63,11 @@ public class MasterRenderer {
 	/**
 	 * Renders the com.oscarcreator.lwjgllearning.entities and light from the perspective of the camera
 	 * */
-	public void render(Light sun, Camera camera){
+	public void render(Camera camera, List<Light> lights){
 		prepare();
 		shader.start();
 		shader.loadSkyColour(RED, GREEN, BLUE);
-		shader.loadLight(sun);
+		shader.loadLights(lights);
 		shader.loadViewMatrix(camera);
 
 		entityRenderer.render(entities);
@@ -80,7 +80,7 @@ public class MasterRenderer {
 		//Load data
 		terrainShader.start();
 		terrainShader.loadSkyColour(RED, GREEN, BLUE);
-		terrainShader.loadLight(sun);
+		terrainShader.loadLights(lights);
 		terrainShader.loadViewMatrix(camera);
 
 		//render
