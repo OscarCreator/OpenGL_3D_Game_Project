@@ -29,6 +29,7 @@ public class StaticShader extends ShaderProgram {
 	private int location_skyColour;
 	private int location_numberOfRows;
 	private int location_offset;
+	private int location_attenuation[];
 
 
 	public StaticShader() {
@@ -57,9 +58,11 @@ public class StaticShader extends ShaderProgram {
 
 		location_lightPosition = new int[MAX_LIGHTS];
 		location_lightColour = new int[MAX_LIGHTS];
+		location_attenuation = new int[MAX_LIGHTS];
 		for (int i = 0; i < MAX_LIGHTS; i++){
 			location_lightPosition[i] = super.getUniformLocation(String.format("lightPosition[%d]", i));
 			location_lightColour[i] = super.getUniformLocation(String.format("lightColour[%d]", i));
+			location_attenuation[i] = super.getUniformLocation(String.format("attenuation[%d]", i));
 		}
 
 	}
@@ -86,10 +89,13 @@ public class StaticShader extends ShaderProgram {
 			if (i < lights.size()){
 				super.loadVector3f(location_lightPosition[i], lights.get(i).getPosition());
 				super.loadVector3f(location_lightColour[i], lights.get(i).getColour());
+				super.loadVector3f(location_attenuation[i], lights.get(i).getAttenuation());
 			//if there is less than MAX_LIGHTS then load up empty
 			}else{
 				super.loadVector3f(location_lightPosition[i], new Vector3f(0,0,0));
 				super.loadVector3f(location_lightColour[i], new Vector3f(0,0,0));
+				//1,0,0 because you can't divide by zero
+				super.loadVector3f(location_attenuation[i], new Vector3f(1,0,0));
 
 			}
 		}

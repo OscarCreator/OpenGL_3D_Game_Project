@@ -34,6 +34,7 @@ public class TerrainShader extends ShaderProgram {
 	private int location_gTexture;
 	private int location_bTexture;
 	private int location_blendMap;
+	private int location_attenuation[];
 
 
 	public TerrainShader() {
@@ -66,9 +67,11 @@ public class TerrainShader extends ShaderProgram {
 
 		location_lightPosition = new int[MAX_LIGHTS];
 		location_lightColour = new int[MAX_LIGHTS];
+		location_attenuation = new int[MAX_LIGHTS];
 		for (int i = 0; i < MAX_LIGHTS; i++){
 			location_lightPosition[i] = super.getUniformLocation(String.format("lightPosition[%d]", i));
 			location_lightColour[i] = super.getUniformLocation(String.format("lightColour[%d]", i));
+			location_attenuation[i] = super.getUniformLocation(String.format("attenuation[%d]", i));
 		}
 
 	}
@@ -102,9 +105,11 @@ public class TerrainShader extends ShaderProgram {
 				super.loadVector3f(location_lightPosition[i], lights.get(i).getPosition());
 				super.loadVector3f(location_lightColour[i], lights.get(i).getColour());
 				//if there is less than MAX_LIGHTS then load up empty
+				super.loadVector3f(location_attenuation[i], lights.get(i).getAttenuation());
 			}else{
 				super.loadVector3f(location_lightPosition[i], new Vector3f(0,0,0));
 				super.loadVector3f(location_lightColour[i], new Vector3f(0,0,0));
+				super.loadVector3f(location_attenuation[i], new Vector3f(1,0,0));
 
 			}
 		}

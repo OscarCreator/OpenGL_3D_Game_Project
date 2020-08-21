@@ -42,7 +42,7 @@ public class MainGameLoop {
 				personData.getIndices());
 		ModelTexture playerTexture = new ModelTexture(loader.loadTexture("playerTexture"));
 		TexturedModel playerTexturedModel = new TexturedModel(playerRaw, playerTexture);
-		Player player = new Player(playerTexturedModel, new Vector3f(30,0,-50),0,180,0,0.7f);
+		Player player = new Player(playerTexturedModel, new Vector3f(370,4.2f, -300),0,180,0,0.7f);
 
 		ModelData treeData = OBJFileLoader.loadOBJ("lowPolyTree");
 		TexturedModel treeModel = new TexturedModel(
@@ -68,6 +68,18 @@ public class MainGameLoop {
 		grassModel.getTexture().setUseFakeLighting(true);
 
 		List<Entity> entityList = new ArrayList<>();
+
+
+		ModelData lampData = OBJFileLoader.loadOBJ("lamp");
+		TexturedModel lampModel = new TexturedModel(
+				loader.loadToVAO(lampData.getVertices(), lampData.getTextureCoords(), lampData.getNormals(), lampData.getIndices()),
+				new ModelTexture(loader.loadTexture("lamp")));
+		lampModel.getTexture().setUseFakeLighting(true);
+
+		entityList.add(new Entity(lampModel, new Vector3f(185,-4.7f, -293), 0,0,0,1));
+		entityList.add(new Entity(lampModel, new Vector3f(370,4.2f, -300), 0,0,0,1));
+		entityList.add(new Entity(lampModel, new Vector3f(293,-6.8f  , -305), 0,0,0,1));
+
 
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy2"));
 		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("mud"));
@@ -104,12 +116,16 @@ public class MainGameLoop {
 		}
 
 
-		Light light1 = new Light(new Vector3f(-200,50, -200), new Vector3f(0,0,4));
-		Light light2 = new Light(new Vector3f(200,50, 200), new Vector3f(4,0,0));
+		Light light1 = new Light(new Vector3f(0, 1000, -7000), new Vector3f(0.4f, 0.4f, 0.4f));
+		Light light2 = new Light(new Vector3f(185,10, -293), new Vector3f(2,0,0), new Vector3f(1, 0.01f, 0.002f));
+		Light light3 = new Light(new Vector3f(370,17, -300), new Vector3f(0,2,2), new Vector3f(1, 0.01f, 0.002f));
+		Light light4 = new Light(new Vector3f(293,7, -305), new Vector3f(2,2,0), new Vector3f(1, 0.01f, 0.002f));
 
 		List<Light> lights = new ArrayList<>();
 		lights.add(light1);
 		lights.add(light2);
+		lights.add(light3);
+		lights.add(light4);
 
 		Camera camera = new Camera(player);
 
