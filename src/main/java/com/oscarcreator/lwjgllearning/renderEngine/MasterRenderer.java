@@ -6,6 +6,7 @@ import com.oscarcreator.lwjgllearning.entities.Light;
 import com.oscarcreator.lwjgllearning.models.TexturedModel;
 import com.oscarcreator.lwjgllearning.shaders.StaticShader;
 import com.oscarcreator.lwjgllearning.shaders.TerrainShader;
+import com.oscarcreator.lwjgllearning.skybox.SkyboxRenderer;
 import com.oscarcreator.lwjgllearning.terrains.Terrain;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -23,9 +24,11 @@ public class MasterRenderer {
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 1000;
 
-	private static final float RED = 0x99 / 256f;
-	private static final float GREEN = 0xc7 / 256f;
-	private static final float BLUE = 0xc3 / 256f;
+	private static final float RED = 0.5444f;
+	private static final float GREEN = 0.62f;
+	private static final float BLUE = 0.69f;
+
+	private Matrix4f projectionMatrix;
 
 	private StaticShader shader = new StaticShader();
 	private EntityRenderer entityRenderer;
@@ -37,10 +40,9 @@ public class MasterRenderer {
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<>();
 	private List<Terrain> terrains = new ArrayList<>();
 
+	private SkyboxRenderer skyboxRenderer;
 
-	private Matrix4f projectionMatrix;
-
-	public MasterRenderer(){
+	public MasterRenderer(Loader loader){
 
 		enableCulling();
 
@@ -48,6 +50,7 @@ public class MasterRenderer {
 
 		entityRenderer = new EntityRenderer(shader, projectionMatrix);
 		terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
+		skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
 	}
 
 	//Disables rendering of backfaces(inside the model)
@@ -87,6 +90,9 @@ public class MasterRenderer {
 		terrainRenderer.render(terrains);
 
 		terrainShader.stop();
+
+		//render skybox
+		skyboxRenderer.render(camera);
 
 		//Remove the com.oscarcreator.lwjgllearning.entities from the previous render. If this is not used the com.oscarcreator.lwjgllearning.entities will
 		// be summed up over time. The rendering will slow down because more and more com.oscarcreator.lwjgllearning.entities
