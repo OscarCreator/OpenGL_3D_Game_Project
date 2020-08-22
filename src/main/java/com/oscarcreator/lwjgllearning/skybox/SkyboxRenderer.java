@@ -82,6 +82,8 @@ public class SkyboxRenderer {
 	}
 
 	public void render(Camera camera){
+		GL11.glDepthMask(false);
+		GL11.glDepthRange(0.99f, 1f);
 		shader.start();
 		//load up view matrix every frame
 		shader.loadViewMatrix(camera);
@@ -101,6 +103,10 @@ public class SkyboxRenderer {
 		GL30.glBindVertexArray(0);
 		//stop shader
 		shader.stop();
+
+		GL11.glDepthRange(0f, 1f);
+		GL11.glDepthMask(true);
+
 	}
 
 }
