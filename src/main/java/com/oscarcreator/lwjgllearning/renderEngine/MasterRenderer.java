@@ -92,7 +92,7 @@ public class MasterRenderer {
 		terrainShader.stop();
 
 		//render skybox
-		skyboxRenderer.render(camera);
+		skyboxRenderer.render(camera, RED, GREEN, BLUE);
 
 		//Remove the com.oscarcreator.lwjgllearning.entities from the previous render. If this is not used the com.oscarcreator.lwjgllearning.entities will
 		// be summed up over time. The rendering will slow down because more and more com.oscarcreator.lwjgllearning.entities
