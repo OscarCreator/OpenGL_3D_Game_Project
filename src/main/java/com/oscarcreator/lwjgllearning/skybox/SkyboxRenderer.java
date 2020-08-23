@@ -5,10 +5,7 @@ import com.oscarcreator.lwjgllearning.models.RawModel;
 import com.oscarcreator.lwjgllearning.renderEngine.DisplayManager;
 import com.oscarcreator.lwjgllearning.renderEngine.Loader;
 import com.oscarcreator.lwjgllearning.util.Constants;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.*;
 import org.lwjgl.util.vector.Matrix4f;
 
 /**
@@ -77,6 +74,8 @@ public class SkyboxRenderer {
 		texture = loader.loadCubeMap(TEXTURE_FILES);
 		//load up night cube map texture
 		nightTexture = loader.loadCubeMap(NIGHT_TEXTURE_FILES);
+		//filters the cubemaps to remove seams
+		GL11.glEnable(GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 		//initialize shader
 		shader = new SkyboxShader();
