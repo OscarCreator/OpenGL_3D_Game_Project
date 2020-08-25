@@ -63,6 +63,10 @@ public class MasterRenderer {
 		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 
+	public Matrix4f getProjectionMatrix(){
+		return projectionMatrix;
+	}
+
 	/**
 	 * Renders the com.oscarcreator.lwjgllearning.entities and light from the perspective of the camera
 	 * */

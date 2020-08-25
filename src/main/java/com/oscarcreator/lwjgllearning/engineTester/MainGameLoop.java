@@ -14,6 +14,7 @@ import com.oscarcreator.lwjgllearning.renderEngine.MasterRenderer;
 import com.oscarcreator.lwjgllearning.terrains.Terrain;
 import com.oscarcreator.lwjgllearning.textures.TerrainTexture;
 import com.oscarcreator.lwjgllearning.textures.TerrainTexturePack;
+import com.oscarcreator.lwjgllearning.toolbox.MousePicker;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -59,14 +60,16 @@ public class MainGameLoop {
 
 		entityList.add(new Entity(lampModel, new Vector3f(185,-4.7f, -293), 0,0,0,1));
 		entityList.add(new Entity(lampModel, new Vector3f(370,4.2f, -300), 0,0,0,1));
-		entityList.add(new Entity(lampModel, new Vector3f(293,-6.8f  , -305), 0,0,0,1));
+		Entity lampEntity = new Entity(lampModel, new Vector3f(293,-6.8f  , -305), 0,0,0,1);
+		entityList.add(lampEntity);
 
 
 		List<Light> lights = new ArrayList<>();
 		lights.add(new Light(new Vector3f(0, 1000, -7000), new Vector3f(0.4f, 0.4f, 0.4f)));
 		lights.add(new Light(new Vector3f(185,10, -293), new Vector3f(2,0,0), new Vector3f(1, 0.01f, 0.002f)));
 		lights.add(new Light(new Vector3f(370,17, -300), new Vector3f(0,2,2), new Vector3f(1, 0.01f, 0.002f)));
-		lights.add(new Light(new Vector3f(293,7, -305), new Vector3f(2,2,0), new Vector3f(1, 0.01f, 0.002f)));
+		Light light = new Light(new Vector3f(293,7, -305), new Vector3f(2,2,0), new Vector3f(1, 0.01f, 0.002f));
+		lights.add(light);
 
 
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy2"));
@@ -118,10 +121,29 @@ public class MainGameLoop {
 
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 
+		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrain1);
+
+		Vector3f temp = new Vector3f();
+
+		final boolean mousePicking = true;
 
 		while (!Display.isCloseRequested()) {
 			camera.move();
 			player.move(terrain1);
+
+			if (mousePicking){
+				picker.update();
+				Vector3f terrainPoint  = picker.getCurrentTerrainPoint();
+				if (terrainPoint != null){
+					lampEntity.setPosition(terrainPoint);
+					temp.x = terrainPoint.x;
+					temp.y = terrainPoint.y + 15;
+					temp.z = terrainPoint.z;
+
+					light.setPosition(temp);
+				}
+			}
+
 
 			renderer.processEntity(player);
 			renderer.processTerrain(terrain1);
