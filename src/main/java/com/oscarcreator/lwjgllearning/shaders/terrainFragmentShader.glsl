@@ -21,6 +21,8 @@ uniform float shineDamper;
 uniform float reflectivity;
 uniform vec3 skyColour;
 
+const float levels = 10.0f;
+
 void main(void){
 
     //colour of the blendmap at the current passed cordinate
@@ -53,6 +55,12 @@ void main(void){
         float nDot1 = dot(unitNormal, unitLightVector);
         float brightness = max(nDot1, 0.0);
 
+        //TODO add boolean to turn on and off cel shading
+
+        //cel shading for the brightness
+        float brightnessLevel = floor(brightness * levels);
+        brightness = brightnessLevel / levels;
+
         //vector from light to vertex
         vec3 lightDirection = -unitLightVector;
         //reflect light with the normal of the vertex
@@ -63,6 +71,11 @@ void main(void){
         //sets 0 if negative
         specularFactor = max(specularFactor, 0.0);
         float dampedFactor = pow(specularFactor, shineDamper);
+
+        //cel shading for the dampedFactor
+        // (cel shading for the specular lighting)
+        float dampedFactorLevel = floor(dampedFactor * levels);
+        dampedFactor = dampedFactorLevel / levels;
 
         vec3 diffuse = (brightness * lightColour[i]) / attFactor;
         totalDiffuse = totalDiffuse + diffuse;

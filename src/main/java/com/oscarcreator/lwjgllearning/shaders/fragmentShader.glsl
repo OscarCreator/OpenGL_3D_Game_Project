@@ -16,6 +16,9 @@ uniform float shineDamper;
 uniform float reflectivity;
 uniform vec3 skyColour;
 
+//cel shading levels
+const float levels = 3.0f;
+
 void main(void){
 
     vec3 unitNormal = normalize(surfaceNormal);
@@ -31,7 +34,15 @@ void main(void){
         float attFactor = attenuation[i].x + (attenuation[i].y * distance) + (attenuation[i].z * distance * distance);
         vec3 unitLightVector = normalize(toLightVector[i]);
         float nDot1 = dot(unitNormal, unitLightVector);
+        //how bright the fragment should be. Value from 0 to 1
         float brightness = max(nDot1, 0.0);
+
+        //TODO add boolean to turn on and off cel shading
+
+        //cel shading for the brightness
+        float brightnessLevel = floor(brightness * levels);
+        brightness = brightnessLevel / levels;
+
         //vector from light to vertex
         vec3 lightDirection = -unitLightVector;
         //reflect light with the normal of the vertex
@@ -42,6 +53,11 @@ void main(void){
         //sets 0 if negative
         specularFactor = max(specularFactor, 0.0);
         float dampedFactor = pow(specularFactor, shineDamper);
+
+        //cel shading for the dampedFactor
+        // (cel shading for the specular lighting)
+        float dampedFactorLevel = floor(dampedFactor * levels);
+        dampedFactor = dampedFactorLevel / levels;
 
         vec3 diffuse = (brightness * lightColour[i]) / attFactor;
         totalDiffuse = totalDiffuse + diffuse;
