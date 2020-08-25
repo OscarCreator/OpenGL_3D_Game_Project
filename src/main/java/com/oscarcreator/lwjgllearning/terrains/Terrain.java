@@ -13,6 +13,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import static com.oscarcreator.lwjgllearning.util.Constants.RES_LOCATION;
+
 /**
  * Created by Oscar on 2019-12-17.
  */
@@ -39,11 +41,12 @@ public class Terrain {
 
 
 	private RawModel generateTerrain(Loader loader, String heightMap) {
-		BufferedImage image = null;
+		BufferedImage image;
 		try {
-			image = ImageIO.read(new File("src/main/res/" + heightMap + ".png"));
+			image = ImageIO.read(new File(RES_LOCATION + heightMap + ".png"));
 		} catch (IOException e) {
 			e.printStackTrace();
+			return null;
 		}
 		int VERTEX_COUNT = image.getHeight();
 

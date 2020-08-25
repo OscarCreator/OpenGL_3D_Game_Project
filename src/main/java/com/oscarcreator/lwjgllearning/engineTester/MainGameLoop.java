@@ -6,15 +6,12 @@ import com.oscarcreator.lwjgllearning.entities.Light;
 import com.oscarcreator.lwjgllearning.entities.Player;
 import com.oscarcreator.lwjgllearning.guis.GuiRenderer;
 import com.oscarcreator.lwjgllearning.guis.GuiTexture;
-import com.oscarcreator.lwjgllearning.models.RawModel;
 import com.oscarcreator.lwjgllearning.models.TexturedModel;
-import com.oscarcreator.lwjgllearning.objconverter.ModelData;
-import com.oscarcreator.lwjgllearning.objconverter.OBJFileLoader;
+import com.oscarcreator.lwjgllearning.models.TexturedModelFactory;
 import com.oscarcreator.lwjgllearning.renderEngine.DisplayManager;
 import com.oscarcreator.lwjgllearning.renderEngine.Loader;
 import com.oscarcreator.lwjgllearning.renderEngine.MasterRenderer;
 import com.oscarcreator.lwjgllearning.terrains.Terrain;
-import com.oscarcreator.lwjgllearning.textures.ModelTexture;
 import com.oscarcreator.lwjgllearning.textures.TerrainTexture;
 import com.oscarcreator.lwjgllearning.textures.TerrainTexturePack;
 import org.lwjgl.opengl.Display;
@@ -34,51 +31,42 @@ public class MainGameLoop {
 
 		Loader loader = new Loader();
 
-		ModelData personData = OBJFileLoader.loadOBJ("person");
+		MasterRenderer renderer = new MasterRenderer(loader);
 
-		RawModel playerRaw = loader.loadToVAO(personData.getVertices(),
-				personData.getTextureCoords(),
-				personData.getNormals(),
-				personData.getIndices());
-		ModelTexture playerTexture = new ModelTexture(loader.loadTexture("playerTexture"));
-		TexturedModel playerTexturedModel = new TexturedModel(playerRaw, playerTexture);
+		TexturedModelFactory texturedModelFactory = new TexturedModelFactory();
+
+
+		TexturedModel playerTexturedModel = texturedModelFactory.getTexturedModel(loader, "person", "playerTexture");
 		Player player = new Player(playerTexturedModel, new Vector3f(370,4.2f, -300),0,180,0,0.7f);
 
-		ModelData treeData = OBJFileLoader.loadOBJ("lowPolyTree");
-		TexturedModel treeModel = new TexturedModel(
-				loader.loadToVAO(treeData.getVertices(), treeData.getTextureCoords(),
-						treeData.getNormals(), treeData.getIndices()),
-				new ModelTexture(loader.loadTexture("lowPolyTree")));
+		Camera camera = new Camera(player);
 
-		ModelData fernData = OBJFileLoader.loadOBJ("fern");
-		ModelTexture fernTexture = new ModelTexture(loader.loadTexture("fern-textureatlas"));
-		fernTexture.setNumberOfRows(2);
-		TexturedModel fernModel = new TexturedModel(
-				loader.loadToVAO(fernData.getVertices(), fernData.getTextureCoords(),
-						fernData.getNormals(), fernData.getIndices()), fernTexture);
+		TexturedModel treeModel = texturedModelFactory.getTexturedModel(loader, "lowPolyTree");
+
+		TexturedModel fernModel = texturedModelFactory.getTexturedModel(loader, "fern", "fern-textureatlas");
+		fernModel.getTexture().setNumberOfRows(2);
 		fernModel.getTexture().setHasTransparency(true);
 		fernModel.getTexture().setUseFakeLighting(true);
 
-		ModelData grassData = OBJFileLoader.loadOBJ("grassModel");
-		TexturedModel grassModel = new TexturedModel(
-				loader.loadToVAO(grassData.getVertices(), grassData.getTextureCoords(),
-						grassData.getNormals(), grassData.getIndices()),
-				new ModelTexture(loader.loadTexture("grassTexture")));
+		TexturedModel grassModel = texturedModelFactory.getTexturedModel(loader, "grassModel", "grassTexture");
 		grassModel.getTexture().setHasTransparency(true);
 		grassModel.getTexture().setUseFakeLighting(true);
 
-		List<Entity> entityList = new ArrayList<>();
-
-
-		ModelData lampData = OBJFileLoader.loadOBJ("lamp");
-		TexturedModel lampModel = new TexturedModel(
-				loader.loadToVAO(lampData.getVertices(), lampData.getTextureCoords(), lampData.getNormals(), lampData.getIndices()),
-				new ModelTexture(loader.loadTexture("lamp")));
+		TexturedModel lampModel = texturedModelFactory.getTexturedModel(loader, "lamp");
 		lampModel.getTexture().setUseFakeLighting(true);
+
+		List<Entity> entityList = new ArrayList<>();
 
 		entityList.add(new Entity(lampModel, new Vector3f(185,-4.7f, -293), 0,0,0,1));
 		entityList.add(new Entity(lampModel, new Vector3f(370,4.2f, -300), 0,0,0,1));
 		entityList.add(new Entity(lampModel, new Vector3f(293,-6.8f  , -305), 0,0,0,1));
+
+
+		List<Light> lights = new ArrayList<>();
+		lights.add(new Light(new Vector3f(0, 1000, -7000), new Vector3f(0.4f, 0.4f, 0.4f)));
+		lights.add(new Light(new Vector3f(185,10, -293), new Vector3f(2,0,0), new Vector3f(1, 0.01f, 0.002f)));
+		lights.add(new Light(new Vector3f(370,17, -300), new Vector3f(0,2,2), new Vector3f(1, 0.01f, 0.002f)));
+		lights.add(new Light(new Vector3f(293,7, -305), new Vector3f(2,2,0), new Vector3f(1, 0.01f, 0.002f)));
 
 
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy2"));
@@ -89,12 +77,11 @@ public class MainGameLoop {
 
 		TerrainTexturePack texturePack = new TerrainTexturePack(
 				backgroundTexture,
-				rTexture,
-				gTexture,
-				bTexture);
+				rTexture, gTexture, bTexture);
 
 		TerrainTexture blendMap = new TerrainTexture((loader.loadTexture("blendMap")));
 
+		//TODO create collision detection with multiple terrains
 		Terrain terrain1 = new Terrain(0,-1, loader, texturePack, blendMap, "heightmap");
 
 
@@ -115,21 +102,7 @@ public class MainGameLoop {
 			}
 		}
 
-
-		Light light1 = new Light(new Vector3f(0, 1000, -7000), new Vector3f(0.4f, 0.4f, 0.4f));
-		Light light2 = new Light(new Vector3f(185,10, -293), new Vector3f(2,0,0), new Vector3f(1, 0.01f, 0.002f));
-		Light light3 = new Light(new Vector3f(370,17, -300), new Vector3f(0,2,2), new Vector3f(1, 0.01f, 0.002f));
-		Light light4 = new Light(new Vector3f(293,7, -305), new Vector3f(2,2,0), new Vector3f(1, 0.01f, 0.002f));
-
-		List<Light> lights = new ArrayList<>();
-		lights.add(light1);
-		lights.add(light2);
-		lights.add(light3);
-		lights.add(light4);
-
-		Camera camera = new Camera(player);
-
-		MasterRenderer renderer = new MasterRenderer(loader);
+		// GUI
 
 		List<GuiTexture> guis = new ArrayList<>();
 		GuiTexture gui = new GuiTexture(
@@ -144,7 +117,6 @@ public class MainGameLoop {
 		guis.add(gui2);
 
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
-
 
 
 		while (!Display.isCloseRequested()) {

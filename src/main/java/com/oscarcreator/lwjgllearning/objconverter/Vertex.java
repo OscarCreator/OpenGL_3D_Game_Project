@@ -1,10 +1,11 @@
 package com.oscarcreator.lwjgllearning.objconverter;
 
+
+import org.lwjgl.util.vector.Vector3f;
+
 /**
  * Created by Oscar on 2020-08-12.
  */
-import org.lwjgl.util.vector.Vector3f;
-
 public class Vertex {
 
 	private static final int NO_INDEX = -1;

@@ -21,15 +21,15 @@ public class StaticShader extends ShaderProgram {
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;
 	private int location_viewMatrix;
-	private int location_lightPosition[];
-	private int location_lightColour[];
+	private int[] location_lightPosition;
+	private int[] location_lightColour;
 	private int location_shineDamper;
 	private int location_reflectivity;
 	private int location_useFakeLightning;
 	private int location_skyColour;
 	private int location_numberOfRows;
 	private int location_offset;
-	private int location_attenuation[];
+	private int[] location_attenuation;
 
 
 	public StaticShader() {

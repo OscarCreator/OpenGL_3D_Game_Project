@@ -10,7 +10,9 @@ public class Light {
 
 	private Vector3f position;
 	private Vector3f colour;
-	//How lights dim with distance
+	/**
+	 * How lights dim with distance. Emulates the effect of point lights
+	 * */
 	private Vector3f attenuation = new Vector3f(1,0,0);
 
 	public Light(Vector3f position, Vector3f colour) {

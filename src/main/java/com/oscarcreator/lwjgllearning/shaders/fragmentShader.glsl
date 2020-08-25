@@ -27,7 +27,7 @@ void main(void){
     for (int i = 0; i < 4; i++){
         //distance from fragment to light
         float distance = length(toLightVector[i]);
-        //function which will dim the light the further it goes with the use of at polynom
+        //function which will dim the light the further it goes with the use of a polynom
         float attFactor = attenuation[i].x + (attenuation[i].y * distance) + (attenuation[i].z * distance * distance);
         vec3 unitLightVector = normalize(toLightVector[i]);
         float nDot1 = dot(unitNormal, unitLightVector);

@@ -20,9 +20,6 @@ import static com.oscarcreator.lwjgllearning.util.Constants.*;
 
 public class Loader {
 
-	//TODO change to a global path
-	private static final String RES_LOC = "src/main/res/";
-
 	private List<Integer> vaos = new ArrayList<>();
 	private List<Integer> vbos = new ArrayList<>();
 	private List<Integer> textures = new ArrayList<>();
@@ -57,9 +54,9 @@ public class Loader {
 	 * Load up texture into memory and return the id for reference.
 	 * */
 	public int loadTexture(String fileName){
-		Texture texture = null;
+		Texture texture;
 		try {
-			texture = TextureLoader.getTexture("PNG", new FileInputStream("src/main/res/" + fileName + ".png"));
+			texture = TextureLoader.getTexture("PNG", new FileInputStream(RES_LOCATION + fileName + ".png"));
 			//Generate all lower resolution images
 			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 			//tell OpenGL to use render lower resolution when surface area is smaller to the camera.
@@ -70,6 +67,8 @@ public class Loader {
 			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, -0.4f);
 		} catch (IOException e) {
 			e.printStackTrace();
+			System.err.println("File not found: \"" + RES_LOCATION + fileName + ".png\"");
+			return -1;
 		}
 		int textureID = texture.getTextureID();
 		textures.add(textureID);
@@ -90,7 +89,7 @@ public class Loader {
 		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texID);
 
 		for (int i = 0; i < textureFiles.length; i++){
-			TextureData data = decodeTextureFile(RES_LOC + textureFiles[i] + ".png");
+			TextureData data = decodeTextureFile(RES_LOCATION + textureFiles[i] + ".png");
 
 			int GL_TEXTURE_CUBE_MAP_INDEX = GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i;
 			GL11.glTexImage2D(GL_TEXTURE_CUBE_MAP_INDEX, 0, GL11.GL_RGBA,
@@ -155,6 +154,9 @@ public class Loader {
 		return vaoID;
 	}
 
+	/**
+	 * Stores the data in attribute list (vbo) in the current bound vao.
+	 * */
 	private void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data){
 		//Create a empty vbo
 		int vboID = GL15.glGenBuffers();

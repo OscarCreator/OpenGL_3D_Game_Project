@@ -8,6 +8,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.oscarcreator.lwjgllearning.util.Constants.RES_LOCATION;
+
 /**
  * Created by Oscar on 2019-08-21.
  */
@@ -16,12 +18,13 @@ import java.util.List;
 public class OBJLoader {
 
 	public static RawModel loadObjModel(String fileName, Loader loader){
-		FileReader fr = null;
+		FileReader fr;
 		try {
-			fr = new FileReader(new File("res/" + fileName + ".obj"));
+			fr = new FileReader(new File(RES_LOCATION + fileName + ".obj"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			System.out.println("Couldn't load file!");
+			return null;
 		}
 
 		BufferedReader reader = new BufferedReader(fr);

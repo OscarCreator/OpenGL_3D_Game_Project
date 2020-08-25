@@ -1,8 +1,5 @@
 package com.oscarcreator.lwjgllearning.objconverter;
 
-/**
- * Created by Oscar on 2020-08-12.
- */
 
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -11,18 +8,23 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OBJFileLoader {
+import static com.oscarcreator.lwjgllearning.util.Constants.RES_LOCATION;
 
-	private static final String RES_LOC = "src/main/res/";
+/**
+ * Created by Oscar on 2020-08-12.
+ */
+public class OBJFileLoader {
 
 	public static ModelData loadOBJ(String objFileName) {
 
-		FileReader isr = null;
-		File objFile = new File(RES_LOC + objFileName + ".obj");
+		FileReader isr;
+		File objFile = new File(RES_LOCATION + objFileName + ".obj");
 		try {
 			isr = new FileReader(objFile);
 		} catch (FileNotFoundException e) {
-			System.err.println("File not found in res; don't use any extention");
+			e.printStackTrace();
+			System.err.println("File not found: \"" + RES_LOCATION + objFileName + ".obj\"");
+			return null;
 		}
 		BufferedReader reader = new BufferedReader(isr);
 
