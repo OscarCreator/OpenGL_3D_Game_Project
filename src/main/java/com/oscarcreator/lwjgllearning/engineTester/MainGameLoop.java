@@ -65,7 +65,7 @@ public class MainGameLoop {
 
 
 		List<Light> lights = new ArrayList<>();
-		lights.add(new Light(new Vector3f(0, 1000, -7000), new Vector3f(2f, 2f, 2f)));
+		lights.add(new Light(new Vector3f(10000, 10000, -10000), new Vector3f(1.3f, 1.3f, 1.3f)));
 		lights.add(new Light(new Vector3f(185,10, -293), new Vector3f(2,0,0), new Vector3f(1, 0.01f, 0.002f)));
 		lights.add(new Light(new Vector3f(370,17, -300), new Vector3f(0,2,2), new Vector3f(1, 0.01f, 0.002f)));
 		Light light = new Light(new Vector3f(293,7, -305), new Vector3f(2,2,0), new Vector3f(1, 0.01f, 0.002f));
@@ -131,6 +131,8 @@ public class MainGameLoop {
 			camera.move();
 			player.move(terrain1);
 
+			loadLevels(renderer);
+
 			if (mousePicking){
 				picker.update();
 				Vector3f terrainPoint  = picker.getCurrentTerrainPoint();
@@ -163,5 +165,23 @@ public class MainGameLoop {
 		//Close display
 		DisplayManager.closeDisplay();
 
+	}
+	static float levels = 3f;
+	static boolean levelDirection = true;
+
+	public static void loadLevels(MasterRenderer renderer){
+		if (levelDirection){
+			levels += 0.01f;
+		}else{
+			levels -= 0.01f;
+		}
+		if (levels > 10){
+			levelDirection = !levelDirection;
+		}
+		if (levels < 2){
+			levelDirection = !levelDirection;
+		}
+
+		renderer.setCelShadingLevels(levels);
 	}
 }
