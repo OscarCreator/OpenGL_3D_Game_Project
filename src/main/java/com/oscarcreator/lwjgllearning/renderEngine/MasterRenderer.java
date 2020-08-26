@@ -24,9 +24,11 @@ public class MasterRenderer {
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 1000;
 
-	private static final float RED = 0.5444f;
-	private static final float GREEN = 0.62f;
-	private static final float BLUE = 0.69f;
+	private static final float RED = 0xb4 / 255f;
+	private static final float GREEN = 0xdc / 255f;
+	private static final float BLUE = 0xf7 / 255f;
+
+	private static final boolean CEL_SHADING = true;
 
 	private Matrix4f projectionMatrix;
 
@@ -51,6 +53,13 @@ public class MasterRenderer {
 		entityRenderer = new EntityRenderer(shader, projectionMatrix);
 		terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
+
+		shader.start();
+		shader.loadCelShadingLevels(3);
+		shader.stop();
+		terrainShader.start();
+		terrainShader.loadCelShadingLevels(3);
+		terrainShader.stop();
 	}
 
 	//Disables rendering of backfaces(inside the model)
@@ -76,6 +85,7 @@ public class MasterRenderer {
 		shader.loadSkyColour(RED, GREEN, BLUE);
 		shader.loadLights(lights);
 		shader.loadViewMatrix(camera);
+		shader.loadCelShading(CEL_SHADING);
 
 		entityRenderer.render(entities);
 
@@ -89,6 +99,8 @@ public class MasterRenderer {
 		terrainShader.loadSkyColour(RED, GREEN, BLUE);
 		terrainShader.loadLights(lights);
 		terrainShader.loadViewMatrix(camera);
+		terrainShader.loadCelShading(CEL_SHADING);
+
 
 		//render
 		terrainRenderer.render(terrains);
@@ -125,6 +137,16 @@ public class MasterRenderer {
 		this.terrains.addAll(Arrays.asList(terrains));
 	}
 
+
+
+	public void setCelShadingLevels(float levels){
+		shader.start();
+		shader.loadCelShadingLevels(levels);
+		shader.stop();
+		terrainShader.start();
+		terrainShader.loadCelShadingLevels(levels);
+		terrainShader.stop();
+	}
 
 	/**
 	 * Stops the shaderprogram, detaches and deletes both the fragment and vertexshader.

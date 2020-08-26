@@ -16,8 +16,8 @@ uniform float shineDamper;
 uniform float reflectivity;
 uniform vec3 skyColour;
 
-//cel shading levels
-const float levels = 3.0f;
+uniform float celShading;
+uniform float levels = 3.0f;
 
 void main(void){
 
@@ -35,13 +35,15 @@ void main(void){
         vec3 unitLightVector = normalize(toLightVector[i]);
         float nDot1 = dot(unitNormal, unitLightVector);
         //how bright the fragment should be. Value from 0 to 1
-        float brightness = max(nDot1, 0.0);
+        float brightness = max(nDot1, 0.3);
 
         //TODO add boolean to turn on and off cel shading
+        if (celShading > 0.5){
+            //cel shading for the brightness
+            float brightnessLevel = floor(brightness * levels);
+            brightness = brightnessLevel / levels;
+        }
 
-        //cel shading for the brightness
-        float brightnessLevel = floor(brightness * levels);
-        brightness = brightnessLevel / levels;
 
         //vector from light to vertex
         vec3 lightDirection = -unitLightVector;
@@ -54,10 +56,12 @@ void main(void){
         specularFactor = max(specularFactor, 0.0);
         float dampedFactor = pow(specularFactor, shineDamper);
 
-        //cel shading for the dampedFactor
-        // (cel shading for the specular lighting)
-        float dampedFactorLevel = floor(dampedFactor * levels);
-        dampedFactor = dampedFactorLevel / levels;
+        if (celShading > 0.5f){
+            //cel shading for the dampedFactor
+            // (cel shading for the specular lighting)
+            float dampedFactorLevel = floor(dampedFactor * levels);
+            dampedFactor = dampedFactorLevel / levels;
+        }
 
         vec3 diffuse = (brightness * lightColour[i]) / attFactor;
         totalDiffuse = totalDiffuse + diffuse;
@@ -75,7 +79,7 @@ void main(void){
     //Output color on the screen
     //finds the color of the texture at the passed texturecoordinate
     //adds specular lighting to the final colour
-    out_Color = vec4(totalDiffuse, 1) * textureColour + vec4(totalSpecular, 1.0);
+    out_Color = vec4(totalDiffuse, 1.0) * textureColour + vec4(totalSpecular, 1.0);
     //mix two colours with the factor visibility
     out_Color = mix(vec4(skyColour, 1.0), out_Color, visibility);
 }

@@ -35,7 +35,8 @@ public class TerrainShader extends ShaderProgram {
 	private int location_bTexture;
 	private int location_blendMap;
 	private int[] location_attenuation;
-
+	private int location_celShading;
+	private int location_levels;
 
 	public TerrainShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -73,6 +74,8 @@ public class TerrainShader extends ShaderProgram {
 			location_lightColour[i] = super.getUniformLocation(String.format("lightColour[%d]", i));
 			location_attenuation[i] = super.getUniformLocation(String.format("attenuation[%d]", i));
 		}
+		location_celShading = super.getUniformLocation("celShading");
+		location_levels = super.getUniformLocation("levels");
 
 	}
 
@@ -127,4 +130,13 @@ public class TerrainShader extends ShaderProgram {
 	public void loadSkyColour(float red, float green, float blue) {
 		super.loadVector3f(location_skyColour, new Vector3f(red, green, blue));
 	}
+
+	public void loadCelShading(boolean value){
+		super.loadBoolean(location_celShading, value);
+	}
+
+	public void loadCelShadingLevels(float value){
+		super.loadFloat(location_levels, value);
+	}
+
 }

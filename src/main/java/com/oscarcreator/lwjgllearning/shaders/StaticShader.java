@@ -30,6 +30,8 @@ public class StaticShader extends ShaderProgram {
 	private int location_numberOfRows;
 	private int location_offset;
 	private int[] location_attenuation;
+	private int location_celShading;
+	private int location_levels;
 
 
 	public StaticShader() {
@@ -64,6 +66,9 @@ public class StaticShader extends ShaderProgram {
 			location_lightColour[i] = super.getUniformLocation(String.format("lightColour[%d]", i));
 			location_attenuation[i] = super.getUniformLocation(String.format("attenuation[%d]", i));
 		}
+
+		location_celShading = super.getUniformLocation("celShading");
+		location_levels = super.getUniformLocation("levels");
 
 	}
 
@@ -120,6 +125,14 @@ public class StaticShader extends ShaderProgram {
 
 	public void loadOffset(float x, float y){
 		super.loadVector2f(location_offset, new Vector2f(x, y));
+	}
+
+	public void loadCelShading(boolean value){
+		super.loadBoolean(location_celShading, value);
+	}
+
+	public void loadCelShadingLevels(float value){
+		super.loadFloat(location_levels, value);
 	}
 
 }
